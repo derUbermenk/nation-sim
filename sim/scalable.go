@@ -10,6 +10,10 @@ type Modifier struct {
 	Neutral float64
 }
 
+func (m *Modifier) WeightedGap() float64 {
+	return m.Weight * (m.Value - m.Neutral)
+}
+
 type Scaler interface {
 	ComputeTotalGap([]*Modifier) float64
 	ApplyChange(gap float64)
@@ -20,11 +24,10 @@ type Scalable struct {
 	Step float64
 }
 
-func (s *Scalable) ComputeTotalGap(modifiers []*Modifier) float64 {
+func (s *Scalable) ComputeTotalGap(weightedGaps []float64) float64 {
 	totalGap := 0.0
-	for _, modifier := range modifiers {
-		weightedGap := modifier.Weight * (modifier.Value - modifier.Neutral)
-		totalGap += weightedGap
+	for _, wG := range weightedGaps {
+		totalGap += wG
 	}
 	return totalGap
 }

@@ -1,6 +1,63 @@
 package sim
 
-import "testing"
+import (
+	"math"
+	"testing"
+)
+
+const floatTolerance = 1e-9
+
+func FloatsEqualWithTolerance(expected float64, got float64) bool {
+	return math.Abs(expected-got) <= floatTolerance
+}
+
+func TestModifier_weightedGap(t *testing.T) {
+	tests := []struct {
+		name     string
+		weight   float64
+		value    float64
+		neutral  float64
+		expected float64
+	}{
+		{
+			name:     "positive gap",
+			weight:   0.5,
+			value:    1.0,
+			neutral:  0.9,
+			expected: 0.05,
+		},
+		{
+			name:     "negative gap",
+			weight:   0.3,
+			value:    0.5,
+			neutral:  0.9,
+			expected: -0.12,
+		},
+		{
+			name:     "zero gap",
+			weight:   0.2,
+			value:    0.0,
+			neutral:  0.0,
+			expected: 0.0,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			m := &Modifier{
+				Weight:  tt.weight,
+				Value:   tt.value,
+				Neutral: tt.neutral,
+			}
+
+			calculated := m.WeightedGap()
+
+			if !FloatsEqualWithTolerance(tt.expected, calculated) {
+				t.Errorf("weightedGap() = %v, want %v", calculated, tt.expected)
+			}
+		})
+	}
+}
 
 func TestScalable_ApplyChange_Grow(t *testing.T) {
 	// given an initial size, a positive gap should grow the count
@@ -40,18 +97,13 @@ func TestScalable_ApplyChange_Neutral(t *testing.T) {
 
 func TestScalable_ComputeTotalGap(t *testing.T) {
 	// given a modifier list it should create the modifiers
-	modifiers := []*Modifier{
-		{Weight: 0.5, Value: 1.0, Neutral: 0.9}, // weighted_gap +0.1
-		{Weight: 0.3, Value: 0.5, Neutral: 0.9}, // weighted_gap -0.4
-		{Weight: 0.2, Value: 0.0, Neutral: 0.0}, // weighted_gap  0.0
-	}
-
 	scalable := &Scalable{Size: 100, Step: 0.05}
+	weightedGaps := []float64{0.05, -0.12, 0.0}
 
-	calculatedTotalGap := scalable.ComputeTotalGap(modifiers)
+	calculatedTotalGap := scalable.ComputeTotalGap(weightedGaps)
 	expectedTotalGap := -0.07
 
-	if calculatedTotalGap != expectedTotalGap {
+	if !FloatsEqualWithTolerance(expectedTotalGap, calculatedTotalGap) {
 		t.Errorf("Calculated total gap %v, not equal to expected total gap %v", calculatedTotalGap, expectedTotalGap)
 	}
 }
