@@ -41,17 +41,17 @@ func TestScalable_ApplyChange_Neutral(t *testing.T) {
 func TestScalable_ComputeTotalGap(t *testing.T) {
 	// given a modifier list it should create the modifiers
 	modifiers := []*Modifier{
-		{Weight: 0.5, Value: 1.0, Neutral: 0.9}, // gap +0.1
-		{Weight: 0.3, Value: 0.5, Neutral: 0.9}, // gap -0.4
-		{Weight: 0.2, Value: 0.0, Neutral: 0.0}, // gap  0.0
+		{Weight: 0.5, Value: 1.0, Neutral: 0.9}, // weighted_gap +0.1
+		{Weight: 0.3, Value: 0.5, Neutral: 0.9}, // weighted_gap -0.4
+		{Weight: 0.2, Value: 0.0, Neutral: 0.0}, // weighted_gap  0.0
 	}
 
 	scalable := &Scalable{Size: 100, Step: 0.05}
 
-	calculated_total_gap := scalable.ComputeTotalGap(modifiers)
-	expected_total_gap := -0.07
+	calculatedTotalGap := scalable.ComputeTotalGap(modifiers)
+	expectedTotalGap := -0.07
 
-	if calculated_total_gap != expected_total_gap {
-		t.Errorf("Calculated total gap %v, not equal to expected total gap %v", calculated_total_gap, expected_total_gap)
+	if calculatedTotalGap != expectedTotalGap {
+		t.Errorf("Calculated total gap %v, not equal to expected total gap %v", calculatedTotalGap, expectedTotalGap)
 	}
 }

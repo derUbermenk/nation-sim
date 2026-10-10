@@ -21,13 +21,14 @@ type Scalable struct {
 }
 
 func (s *Scalable) ComputeTotalGap(modifiers []*Modifier) float64 {
-	total_gap := 0.0
+	totalGap := 0.0
 	for _, modifier := range modifiers {
-		total_gap += modifier.Weight * (modifier.Value - modifier.Neutral)
+		weightedGap := modifier.Weight * (modifier.Value - modifier.Neutral)
+		totalGap += weightedGap
 	}
-	return total_gap
+	return totalGap
 }
 
-func (s *Scalable) ApplyChange(total_gap float64) {
-	s.Size = max(0, s.Size*(1+s.Step*total_gap))
+func (s *Scalable) ApplyChange(totalGap float64) {
+	s.Size = max(0, s.Size*(1+s.Step*totalGap))
 }
