@@ -20,8 +20,12 @@ type Scalable struct {
 	Step float64
 }
 
-func (s *Scalable) ComputeTotalGap([]*Modifier) float64 {
-	return 0.0
+func (s *Scalable) ComputeTotalGap(modifiers []*Modifier) float64 {
+	total_gap := 0.0
+	for _, modifier := range modifiers {
+		total_gap += modifier.Weight * (modifier.Value - modifier.Neutral)
+	}
+	return total_gap
 }
 
 func (s *Scalable) ApplyChange(total_gap float64) {

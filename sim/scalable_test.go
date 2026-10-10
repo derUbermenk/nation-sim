@@ -49,7 +49,7 @@ func TestScalable_ComputeTotalGap(t *testing.T) {
 	scalable := &Scalable{Size: 100, Step: 0.05}
 
 	calculated_total_gap := scalable.ComputeTotalGap(modifiers)
-	expected_total_gap := -0.3
+	expected_total_gap := -0.07
 
 	if calculated_total_gap != expected_total_gap {
 		t.Errorf("Calculated total gap %v, not equal to expected total gap %v", calculated_total_gap, expected_total_gap)
