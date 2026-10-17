@@ -1,5 +1,8 @@
 package sim
 
+// Type key to avoid misspelled modifiers
+type ModKind string
+
 // Modifiers contains signals for the direction of a scalables
 // change in size.
 // Difference between Neutral and Value is the Gap
@@ -10,8 +13,19 @@ type Modifier struct {
 	Neutral float64
 }
 
+type Modifiers map[ModKind]*Modifier
+
 func (m *Modifier) WeightedGap() float64 {
 	return m.Weight * (m.Value - m.Neutral)
+}
+
+func (ms Modifiers) WeightedGaps() []float64 {
+	var weightedGaps []float64
+	for _, modifier := range ms {
+		weightedGaps = append(weightedGaps, modifier.WeightedGap())
+	}
+
+	return weightedGaps
 }
 
 type Scaler interface {
