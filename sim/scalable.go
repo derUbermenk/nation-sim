@@ -29,13 +29,18 @@ func (ms Modifiers) WeightedGaps() []float64 {
 }
 
 type Scaler interface {
-	ComputeTotalGap([]*Modifier) float64
+	GetWeightedGaps(Modifiers) []float64
+	ComputeTotalGap([]float64) float64
 	ApplyChange(gap float64)
 }
 
 type Scalable struct {
 	Size float64
 	Step float64
+}
+
+func (s *Scalable) GetWeightedGaps(ms Modifiers) []float64 {
+	return ms.WeightedGaps()
 }
 
 func (s *Scalable) ComputeTotalGap(weightedGaps []float64) float64 {
